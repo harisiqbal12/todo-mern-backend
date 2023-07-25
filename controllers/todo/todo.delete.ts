@@ -32,12 +32,11 @@ export default async function handler(req: R, res: Response<Data>) {
 			.status(200)
 			.json({ success: true, error: false, message: 'Deleted', data: todo });
 	} catch (err: unknown) {
-		console.log(err);
 		if (err instanceof AppError) {
 			res.status(err.statusCode).json({
 				success: false,
 				error: true,
-				message: 'todo is deleted',
+				message: err?.message,
 				data: null,
 			});
 

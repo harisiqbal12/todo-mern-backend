@@ -64,6 +64,8 @@ export default async function handler(req: Request, res: Response<Data>) {
 				data: null,
 				token: null,
 			});
+
+			return;
 		}
 
 		res.status(500).json({

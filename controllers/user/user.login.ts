@@ -16,10 +16,8 @@ type Data = {
 
 export default async function handler(req: Request, res: Response<Data>) {
 	try {
-		console.log('here');
 		validateBody(req?.body);
 
-		console.log(req?.body?.email);
 
 		const user = await User.findOne({ email: req?.body?.email }).select(
 			'+password'
@@ -31,7 +29,7 @@ export default async function handler(req: Request, res: Response<Data>) {
 		);
 
 		if (!isPaswordMatch) {
-			throw new AppError('Invalid password', 401);
+			throw new AppError('Invalid password or email', 401);
 		}
 
 		const token = signToken(user?._id);
@@ -44,13 +42,10 @@ export default async function handler(req: Request, res: Response<Data>) {
 			path: '/',
 		};
 
-		console.log(options)
-
 		//@ts-ignore
 		const cookieString = cookie.serialize('jwt', token, options);
 		res.setHeader('Set-Cookie', cookieString);
 		res.setHeader('Authorization', `Bearer ${token}`);
-	
 
 		res.status(200).json({
 			success: true,
@@ -60,7 +55,6 @@ export default async function handler(req: Request, res: Response<Data>) {
 			token: token,
 		});
 	} catch (err: unknown) {
-		console.log(err);
 		if (err instanceof AppError) {
 			res.status(err.statusCode).json({
 				success: false,

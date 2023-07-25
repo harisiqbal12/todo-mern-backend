@@ -37,7 +37,6 @@ export default async function handler(req: Request, res: Response<Data>) {
 		//@ts-ignore
 		const user = await User.findById(response.payload?.id);
 
-		console.log(user);
 
 		res.status(200).json({
 			success: true,

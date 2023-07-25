@@ -47,4 +47,4 @@ const Todo: Model<TodoDocument> = mongoose.model<TodoDocument>(
 	todoSchema
 );
 
-export { Todo, TodoInput, TodoResponse };
+export { Todo, TodoInput };

@@ -27,7 +27,6 @@ export default async function handler(req: R, res: Response<Data>) {
 
 		const todo = await Todo.create(input);
 
-		console.log(todo);
 
 		res
 			.status(201)

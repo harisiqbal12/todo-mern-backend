@@ -44,7 +44,6 @@ export default async function handler(
 
 		//@ts-ignore
 		const user = await User.findById(decoded?.payload?.id);
-		console.log(user?.email);
 
 		if (!user?.email) {
 			throw new AppError('User not exists', 404);

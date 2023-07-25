@@ -23,7 +23,6 @@ type UserResponse = {
 	_id: string;
 	createdAt: string;
 	updatedAt: string;
-	
 };
 
 const userSchema = new mongoose.Schema(
@@ -49,9 +48,9 @@ const userSchema = new mongoose.Schema(
 		},
 		password: {
 			type: String,
-			required: [true, 'user must provide a password'],
+			required: [true, 'user must provide a password'] as any, // typescript was giving error during compilation. i've tested it so i manullay skip the typecheck of typescript on this.
 			select: false,
-			minlength: [8, 'password must be equals to or more than 8 characters'],
+			minlength: [8, 'password is too short'] as any,
 		},
 	},
 	{
