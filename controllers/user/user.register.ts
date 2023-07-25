@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import cookie from 'cookie';
 
 import { signToken } from '../../utils';
 import { UserInput, User } from '../../models';
@@ -8,7 +9,10 @@ type Data = {
 	success: boolean;
 	error: boolean;
 	message: string | null;
-	data: UserInput | null;
+	data: {
+		name: string | undefined;
+		email: string | undefined;
+	} | null;
 	token: string | null;
 };
 
@@ -25,12 +29,17 @@ export default async function handler(req: Request, res: Response<Data>) {
 		const createdUser = await User.create(user);
 		const token = signToken(createdUser._id);
 
-		res.cookie('jwt', token, {
-			expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1Day expiration.
-			httpOnly: true,
-			secure: req.secure || req.headers['x-forwarded-proto'] === 'https', // if request is secure or forwarded protocol is https then the cookie is seure
-			sameSite: 'none',
-		});
+		const maxAgeInSeconds = 24 * 60 * 60;
+		const options = {
+			maxAge: maxAgeInSeconds,
+			httpOnly: false,
+			secure: false,
+			path: '/',
+		};
+
+		const cookieString = cookie.serialize('jwt', token, options);
+		res.setHeader('Set-Cookie', cookieString);
+		res.setHeader('Authorization', `Bearer ${token}`);
 
 		res.status(200).json({
 			success: true,
@@ -38,7 +47,6 @@ export default async function handler(req: Request, res: Response<Data>) {
 			message: 'User created',
 			data: {
 				name: createdUser.name,
-				password: createdUser.password,
 				email: createdUser.email,
 			},
 			token: token,

@@ -10,7 +10,10 @@ type Data = {
 	success: boolean;
 	error: boolean;
 	message: string | null;
-	data: UserInput | null;
+	data: {
+		name: string | undefined;
+		email: string | undefined;
+	} | null;
 	token: string | null;
 };
 
@@ -18,10 +21,13 @@ export default async function handler(req: Request, res: Response<Data>) {
 	try {
 		validateBody(req?.body);
 
+		console.log('body: ', req?.body);
 
 		const user = await User.findOne({ email: req?.body?.email }).select(
 			'+password'
 		);
+
+		console.log(user?.password);
 
 		const isPaswordMatch = await user?.correctPassword(
 			req?.body?.password,
@@ -42,7 +48,6 @@ export default async function handler(req: Request, res: Response<Data>) {
 			path: '/',
 		};
 
-		//@ts-ignore
 		const cookieString = cookie.serialize('jwt', token, options);
 		res.setHeader('Set-Cookie', cookieString);
 		res.setHeader('Authorization', `Bearer ${token}`);
@@ -51,10 +56,15 @@ export default async function handler(req: Request, res: Response<Data>) {
 			success: true,
 			error: false,
 			message: 'Logged in',
-			data: null,
+			data: {
+				email: user?.email,
+				name: user?.name,
+			},
 			token: token,
 		});
 	} catch (err: unknown) {
+		console.log(err);
+		console.log('errors');
 		if (err instanceof AppError) {
 			res.status(err.statusCode).json({
 				success: false,
