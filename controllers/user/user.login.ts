@@ -39,23 +39,18 @@ export default async function handler(req: Request, res: Response<Data>) {
 		const maxAgeInSeconds = 24 * 60 * 60;
 		const options = {
 			maxAge: maxAgeInSeconds,
-			httpOnly: true,
-			secure: true,
+			httpOnly: false,
+			secure: false,
 			path: '/',
-			sameSite: 'none',
 		};
+
+		console.log(options)
 
 		//@ts-ignore
 		const cookieString = cookie.serialize('jwt', token, options);
 		res.setHeader('Set-Cookie', cookieString);
 		res.setHeader('Authorization', `Bearer ${token}`);
-		// res.cookie('jwt', token, {
-		// 	expires: new Date(Date.now() + oneDayInSeconds * 1000), // 1Day expiration.
-		// 	httpOnly: true,
-		// 	path: '/',
-		// 	secure: false,
-		// 	maxAge: oneDayInSeconds,
-		// });
+	
 
 		res.status(200).json({
 			success: true,

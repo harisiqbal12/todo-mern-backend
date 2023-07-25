@@ -30,7 +30,7 @@ export default async function handler(req: R, res: Response<Data>) {
 
 		res
 			.status(200)
-			.json({ success: true, error: true, message: 'Deleted', data: todo });
+			.json({ success: true, error: false, message: 'Deleted', data: todo });
 	} catch (err: unknown) {
 		console.log(err);
 		if (err instanceof AppError) {
